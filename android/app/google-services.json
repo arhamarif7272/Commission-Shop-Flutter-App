@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "159964705152",
+    "project_id": "commission-shop-86b40",
+    "storage_bucket": "commission-shop-86b40.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159964705152:android:132259569790edef319165",
+        "android_client_info": {
+          "package_name": "com.example.comission_shop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlWn1XfbJIf8H-N4VV_3eTNaZDV3u3Yzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
