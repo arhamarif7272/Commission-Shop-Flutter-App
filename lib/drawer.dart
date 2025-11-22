@@ -1,178 +1,94 @@
-import 'package:comission_shop/contactus.dart';
 import 'package:flutter/material.dart';
-import 'package:comission_shop/products.dart';
-import 'package:comission_shop/about.dart';
-import 'package:comission_shop/payment.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:comission_shop/login.dart'; // Access UserRoleManager
+
+// Screen Imports
 import 'package:comission_shop/home.dart';
-// 🎯 ASSUMING YOU HAVE A login.dart FILE
-import 'package:comission_shop/login.dart';
+import 'package:comission_shop/products.dart';
+import 'package:comission_shop/payment.dart';
+import 'package:comission_shop/contactus.dart';
+import 'package:comission_shop/about.dart';
+import 'package:comission_shop/sell.dart';
+import 'package:comission_shop/revenue.dart';
+import 'package:comission_shop/userinfo.dart';
+import 'package:comission_shop/setting.dart';
 
 class appdrawer extends StatelessWidget {
   const appdrawer({super.key});
 
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, Widget page) {
+    return ListTile(
+      onTap: () {
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+      },
+      leading: Icon(icon, color: Colors.black),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    UserRoleManager.currentRole = null;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const login()),
+          (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final role = UserRoleManager.currentRole;
+
     return Drawer(
       backgroundColor: Colors.white,
-
-      // 🎯 Wrap ListView with Stack to allow absolute positioning of the button
-      child: Stack(
+      child: Column(
         children: [
-          // 1. Navigation List (The main content)
-          ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              DrawerHeader(
-                decoration: const BoxDecoration(color: Colors.amber),
-                child: const Center(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.account_circle,
-                        color: Colors.black,
-                        size: 64.0,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        "User",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+          DrawerHeader(
+            decoration: const BoxDecoration(color: Colors.amber),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.account_circle, size: 50, color: Colors.black),
+                  const SizedBox(height: 10),
+                  Text(role ?? "Guest", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ],
               ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const homeScreen()),
-                  );
-                },
-                leading: const Icon(Icons.home),
-                title: const Text(
-                  "Home",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                iconColor: Colors.black,
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const PRODUCTS()),
-                  );
-                },
-                leading: const Icon(Icons.production_quantity_limits),
-                title: const Text(
-                  "Products",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                iconColor: Colors.black,
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const payment()),
-                  );
-                },
-                leading: const Icon(Icons.payment),
-                title: const Text(
-                  "Payment",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                iconColor: Colors.black,
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const contactus()),
-                  );
-                },
-                leading: const Icon(Icons.contact_page),
-                title: const Text(
-                  "Contact Us",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                iconColor: Colors.black,
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const about()),
-                  );
-                },
-                leading: const Icon(Icons.add_business),
-                title: const Text(
-                  "About Us",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                iconColor: Colors.black,
-              ),
-
-              // Add enough empty space so the button doesn't cover the last ListTile
-              const SizedBox(height: 70),
-            ],
+            ),
           ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildMenuItem(context, "Home", Icons.home, const homeScreen()),
 
-          // 2. 🎯 Login Button Positioned at the Bottom Right
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Close the drawer before pushing the new page
-                  Navigator.pop(context);
+                // LOGIC: Conditional Menus
+                if (role == 'Seller') ...[
+                  _buildMenuItem(context, "Sell Listings", Icons.store, const sell()),
+                ] else if (role == 'Admin') ...[
+                  _buildMenuItem(context, "Revenue", Icons.monetization_on, const revenue()),
+                  _buildMenuItem(context, "Manage Users", Icons.people, const userinfo()),
+                ] else ...[
+                  // Buyer or Guest
+                  _buildMenuItem(context, "Products", Icons.shopping_cart, const PRODUCTS()),
 
-                  // Push the login screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const login()),
-                  );
-                },
-                icon: const Icon(Icons.login, color: Colors.black),
-                label: const Text(
-                  'Login',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber, // Button color
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
+                ],
+
+                _buildMenuItem(context, "Shop Info", Icons.contact_phone, const contactus()),
+                _buildMenuItem(context, "About Us", Icons.info, const about()),
+                _buildMenuItem(context, "Settings", Icons.settings, const setting()),
+
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: ElevatedButton.icon(
+              onPressed: () => _logout(context),
+              icon: const Icon(Icons.logout, color: Colors.black),
+              label: const Text("Logout", style: TextStyle(color: Colors.black)),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
             ),
           ),
         ],

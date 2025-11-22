@@ -1,7 +1,7 @@
-
 import 'package:comission_shop/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:comission_shop/products.dart';
+import 'package:comission_shop/login.dart'; // Import to access UserRoleManager
 
 class homeScreen extends StatelessWidget {
   const homeScreen({super.key});
@@ -10,6 +10,9 @@ class homeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Determine the screen width for responsive design (Container-based)
     final double screenWidth = MediaQuery.of(context).size.width;
+
+    // Get the current user role
+    final String? userRole = UserRoleManager.currentRole;
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade900,
@@ -21,19 +24,19 @@ class homeScreen extends StatelessWidget {
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: 20, // Reduced size to fit better
+              fontSize: 20,
             ),
           ),
         ),
       ),
 
-    drawer: appdrawer(),
+      drawer: const appdrawer(),
       body: ListView(
         children: <Widget>[
-          // 1. **Hero Section Container** 🦸‍♂️ (Unchanged)
+          // 1. **Hero Section Container** 🦸‍♂️
           Container(
-            height: 350, // Hero section height
-            width: screenWidth, // Full width
+            height: 350,
+            width: screenWidth,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('hero.png'),
@@ -72,35 +75,39 @@ class homeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Call to Action Button inside a Container
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.amber,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        // Navigate to Products page on tap
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PRODUCTS(),
-                          ),
-                        );
-                      },
-                      label: const Text(
-                        "View Our Products",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+
+                  // --- CONDITIONAL BUTTON RENDERING ---
+                  // Only show if the user is a 'Buyer' or 'Guest' (null)
+                  if (userRole == 'Buyer' || userRole == null)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      icon: const Icon(Icons.store, color: Colors.black),
-                      backgroundColor: Colors.transparent, // Make background transparent
-                      elevation: 0, // Remove button shadow
+                      child: FloatingActionButton.extended(
+                        onPressed: () {
+                          // Navigate to Products page on tap
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PRODUCTS(),
+                            ),
+                          );
+                        },
+                        label: const Text(
+                          "View Our Products",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        icon: const Icon(Icons.store, color: Colors.black),
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                      ),
                     ),
-                  ),
+                  // ------------------------------------
                 ],
               ),
             ),
@@ -108,7 +115,7 @@ class homeScreen extends StatelessWidget {
 
           // ---
 
-          // 2. **Featured Section Container** ✨ (Unchanged)
+          // 2. **Featured Section Container** ✨
           Container(
             padding: const EdgeInsets.all(20),
             color: Colors.blueGrey.shade800,
@@ -124,13 +131,13 @@ class homeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 15),
-                // Features as Containers inside a Row (simulating a card/feature row)
+                // Features as Containers inside a Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     // Feature 1
                     Container(
-                      width: screenWidth / 3 - 30, // Responsive width
+                      width: screenWidth / 3 - 30,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white10,
@@ -229,7 +236,7 @@ class homeScreen extends StatelessWidget {
                   "Latest Arrivals",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 30, // Increased size from 24 to 30
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -241,7 +248,7 @@ class homeScreen extends StatelessWidget {
                     // Product Image 1
                     Container(
                       width: 300,
-                      height: 250, // Increased height from 150 to 200
+                      height: 250,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -254,7 +261,7 @@ class homeScreen extends StatelessWidget {
                     ),
                     Container(
                       width: 300,
-                      height: 250, // Increased height from 150 to 200
+                      height: 250,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -267,7 +274,7 @@ class homeScreen extends StatelessWidget {
                     ),
                     Container(
                       width: 300,
-                      height: 250, // Increased height from 150 to 200
+                      height: 250,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -281,7 +288,7 @@ class homeScreen extends StatelessWidget {
                     // Product Image 2
                     Container(
                       width: 300,
-                      height: 250, // Increased height from 150 to 200
+                      height: 250,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
