@@ -29,12 +29,14 @@ class contactus extends StatelessWidget {
             children: [
               Icon(icon, color: Colors.black, size: 30),
               const SizedBox(width: 10),
-              Text(
-                role,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black,
+              Expanded( // Added Expanded to prevent overflow for long role names
+                child: Text(
+                  role,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ],
@@ -56,6 +58,7 @@ class contactus extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, // Align to start for multi-line text
         children: [
           Icon(icon, size: 18, color: Colors.blueGrey.shade900),
           const SizedBox(width: 8),
@@ -73,7 +76,8 @@ class contactus extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.black87,
               ),
-              overflow: TextOverflow.ellipsis,
+              // Removed overflow: TextOverflow.ellipsis to allow wrapping if needed, or keep it based on preference
+              // For addresses/descriptions, wrapping is usually better.
             ),
           ),
         ],
@@ -98,7 +102,7 @@ class contactus extends StatelessWidget {
           ),
         ),
       ),
-      drawer: appdrawer(),
+      drawer: const appdrawer(),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: <Widget>[
@@ -116,14 +120,16 @@ class contactus extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.store_outlined,color: Colors.blueGrey,),
-                    SizedBox(width: 5,),
-                    const Text(
-                      "Commission Shop Head Office",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.blueGrey,
+                    const Icon(Icons.store_outlined, color: Colors.blueGrey),
+                    const SizedBox(width: 5),
+                    Expanded( // Added Expanded to prevent overflow here
+                      child: const Text(
+                        "Commission Shop Head Office",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.blueGrey,
+                        ),
                       ),
                     ),
                   ],
@@ -147,7 +153,7 @@ class contactus extends StatelessWidget {
                 _buildInfoRow(
                   Icons.access_time,
                   "Hours:",
-                  "Mon - Sun: 8:00 AM - 7:00 PM   (Except:Fri)",
+                  "Mon - Sun: 8:00 AM - 7:00 PM (Except:Fri)",
                 ),
               ],
             ),
@@ -158,14 +164,16 @@ class contactus extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 10.0),
             child: Row(
               children: [
-                Icon(Icons.group_outlined,color: Colors.white,),
-                SizedBox(width: 5,),
-                Text(
-                  "Meet the Team",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                Icon(Icons.group_outlined, color: Colors.white),
+                SizedBox(width: 5),
+                Expanded( // Added Expanded just in case
+                  child: Text(
+                    "Meet the Team",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
@@ -192,7 +200,7 @@ class contactus extends StatelessWidget {
             icon: Icons.supervisor_account,
           ),
           _buildStaffDetailContainer(
-            role: "Senior Clerk ",
+            role: "Senior Clerk",
             name: "Muhammad Waqas",
             phone: "+92 333 987 5445",
             email: "muhammad.waqas@shop.com",
