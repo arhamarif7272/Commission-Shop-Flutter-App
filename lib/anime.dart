@@ -152,3 +152,56 @@ class _animeState extends State<anime> with SingleTickerProviderStateMixin {
     );
   }
 }
+
+
+
+// import 'package:flutter/material.dart';
+//
+// void main() => runApp(const MaterialApp(home: SimpleAnimation()));
+//
+// class SimpleAnimation extends StatefulWidget {
+//   const SimpleAnimation({super.key});
+//
+//   @override
+//   State<SimpleAnimation> createState() => _SimpleAnimationState();
+// }
+//
+// class _SimpleAnimationState extends State<SimpleAnimation> {
+//   // 1. Define the initial state variables
+//   double _size = 100.0;
+//   Color _color = Colors.blue;
+//   double _radius = 8.0;
+//
+//   void _animate() {
+//     setState(() {
+//       // 2. Change the values inside setState
+//       _size = _size == 100.0 ? 200.0 : 100.0;
+//       _color = _color == Colors.blue ? Colors.red : Colors.blue;
+//       _radius = _radius == 8.0 ? 50.0 : 8.0;
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: AnimatedContainer(
+//           // 3. Set the duration (how long the animation lasts)
+//           duration: const Duration(milliseconds: 500),
+//           // 4. Choose a curve (bounce, easeIn, etc.)
+//           curve: Curves.easeInOut,
+//           width: _size,
+//           height: _size,
+//           decoration: BoxDecoration(
+//             color: _color,
+//             borderRadius: BorderRadius.circular(_radius),
+//           ),
+//         ),
+//       ),
+//       floatingActionButton: FloatingActionButton(
+//         onPressed: _animate,
+//         child: const Icon(Icons.play_arrow),
+//       ),
+//     );
+//   }
+// }

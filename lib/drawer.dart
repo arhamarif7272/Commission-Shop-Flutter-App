@@ -1,5 +1,7 @@
 import 'package:comission_shop/anime.dart';
 import 'package:comission_shop/appointments.dart';
+import 'package:comission_shop/review.dart';
+import 'package:comission_shop/viewrating.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import to get User details
 import 'package:comission_shop/login.dart'; // Access UserRoleManager
@@ -159,6 +161,12 @@ class appdrawer extends StatelessWidget {
                     Icons.calendar_month,
                     const appointment_booking(),
                   ),
+                  _buildMenuItem(
+                    context,
+                    "Rate Us",
+                    Icons.rate_review,
+                    const review(),
+                  ),
                 ] else if (role == 'Admin') ...[
                   _buildMenuItem(
                     context,
@@ -178,6 +186,12 @@ class appdrawer extends StatelessWidget {
                     Icons.schedule,
                     const appointments(),
                   ),
+                  _buildMenuItem(
+                    context,
+                    "View Reviews",
+                    Icons.reviews,
+                    const view_rating(),
+                  ),
                 ] else ...[
                   // Buyer or Guest
                   _buildMenuItem(
@@ -192,6 +206,12 @@ class appdrawer extends StatelessWidget {
                     Icons.calendar_month,
                     const appointment_booking(),
                   ),
+                  _buildMenuItem(
+                    context,
+                    "Rate Us",
+                    Icons.rate_review,
+                    const review(),
+                  ),
                 ],
 
                 _buildMenuItem(
@@ -200,6 +220,7 @@ class appdrawer extends StatelessWidget {
                   Icons.contact_phone,
                   const contactus(),
                 ),
+
                 _buildMenuItem(context, "About Us", Icons.info, const about()),
                 _buildMenuItem(
                   context,

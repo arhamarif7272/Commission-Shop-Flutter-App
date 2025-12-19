@@ -59,6 +59,66 @@ class _loginState extends State<login> {
     );
   }
 
+  // --- NEW: Forgot Password Function ---
+  Future<void> _forgotPassword() async {
+    TextEditingController resetEmailController = TextEditingController();
+
+    // Show Dialog to enter email
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Reset Password"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text("Enter your email to receive a password reset link."),
+              const SizedBox(height: 10),
+              TextField(
+                controller: resetEmailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: "Email Address",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (resetEmailController.text.isNotEmpty) {
+                  try {
+                    await _auth.sendPasswordResetEmail(email: resetEmailController.text.trim());
+                    if (mounted) {
+                      Navigator.pop(context); // Close dialog
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Password reset email sent! Check your inbox (and spam).')),
+                      );
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    if (mounted) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: ${e.message}')),
+                      );
+                    }
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+              child: const Text("Send Email", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _login() async {
     if (_formKey.currentState!.validate() && _selectedUserType != null) {
       try {
@@ -149,6 +209,7 @@ class _loginState extends State<login> {
                     ),
                   ),
 
+
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: DropdownButtonFormField<String>(
@@ -159,6 +220,19 @@ class _loginState extends State<login> {
                         return DropdownMenuItem<String>(value: value, child: Text(value));
                       }).toList(),
                       onChanged: (newValue) => setState(() => _selectedUserType = newValue),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _forgotPassword,
+                      child: const Text(
+                        "Forgot Password?",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
                     ),
                   ),
 

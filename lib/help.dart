@@ -1,7 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class help extends StatelessWidget {
+class help extends StatefulWidget {
   const help({super.key});
+
+  @override
+  State<help> createState() => _helpState();
+}
+
+class _helpState extends State<help> {
+  final TextEditingController _feedbackController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _feedbackController.dispose();
+    super.dispose();
+  }
+
+  // --- SUBMIT FEEDBACK TO FIRESTORE ---
+  Future<void> _submitFeedback() async {
+    if (_feedbackController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter your feedback first.")),
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      String userName = user?.displayName ?? user?.email ?? "Anonymous";
+      String uid = user?.uid ?? "guest";
+
+      // Save to 'reviews' collection (shared with ratings) OR a separate 'feedback' collection
+      // Here using 'reviews' so it shows up in your existing Admin View Rating screen
+      await FirebaseFirestore.instance.collection('reviews').add({
+        'userId': uid,
+        'userName': userName,
+        'rating': 0, // 0 indicates general feedback/no star rating
+        'comment': _feedbackController.text.trim(),
+        'type': 'General Feedback',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Feedback sent! Thank you."),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      _feedbackController.clear(); // Clear input
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error sending feedback: $e"), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
 
   // Helper to build a FAQ Item
   Widget _buildFaqItem({required String question, required String answer}) {
@@ -195,7 +258,7 @@ class help extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          // 4. Feedback Section
+          // 4. Feedback Section (Updated with Database Logic)
           Container(
             padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
@@ -211,6 +274,7 @@ class help extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 TextField(
+                  controller: _feedbackController,
                   maxLines: 3,
                   decoration: InputDecoration(
                     hintText: "Tell us how we can improve...",
@@ -224,15 +288,13 @@ class help extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Feedback sent! Thank you.")),
-                      );
-                    },
+                    onPressed: _isSubmitting ? null : _submitFeedback,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.amber,
                     ),
-                    child: const Text(
+                    child: _isSubmitting
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+                        : const Text(
                       "Submit Feedback",
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
